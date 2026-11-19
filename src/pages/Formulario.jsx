@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { guardarIncidente } from '../services/db';
 import HomeButton from '../components/HomeButton';
 
 export default function Formulario() {
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // 1. Revisamos si venimos a editar un caso
+  const datosAEditar = location.state?.datosAEditar;
+  const idCasoAEditar = location.state?.idCasoAEditar;
+
+  // 2. Estado inicial del formulario
   const [formData, setFormData] = useState({
     nombre: '', edad: '', telefono: '', correo: '', estadoMunicipio: '',
     esMenor: false, nombreTutor: '', telefonoTutor: '',
@@ -14,6 +20,16 @@ export default function Formulario() {
     descripcion: '', accionesTomadas: [],
     personaConoceHechos: '', reportePrevio: ''
   });
+
+  // 3. Si hay datos a editar, los cargamos en el formulario al montar la pantalla
+  useEffect(() => {
+    if (datosAEditar) {
+      setFormData((prev) => ({
+        ...prev,
+        ...datosAEditar // Rellenamos los campos con los datos del historial
+      }));
+    }
+  }, [datosAEditar]);
 
   const [evidencias, setEvidencias] = useState([]);
   const [errores, setErrores] = useState({});
@@ -53,9 +69,18 @@ export default function Formulario() {
     }
 
     setErrores({});
+    
     try {
-      await guardarIncidente(formData);
-      navigate('/pdf-preview', { state: { datos: formData } });
+      // Si estamos editando un caso, no creamos uno nuevo, solo actualizamos
+      if (!idCasoAEditar) {
+        await guardarIncidente(formData);
+      } else {
+        // Aquí podrías añadir lógica para actualizar el incidente en IndexedDB si lo deseas
+        // await db.incidentes.update(idCasoAEditar, formData);
+      }
+      
+      // Navegamos a la vista previa con los datos (nuevos o editados)
+      navigate('/pdf-preview', { state: { datos: formData, esEdicion: !!idCasoAEditar } });
     } catch (error) {
       console.error("Error al guardar:", error);
     }

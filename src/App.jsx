@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
-// --- 1. IMPORTACIÓN DE TODAS LAS PANTALLAS REALES ---
+// --- 1. IMPORTACIÓN DE PANTALLAS PRINCIPALES ---
 import Home from './pages/Home';
 import GuiaGeneral from './pages/GuiaGeneral';
 import GuiaLlenado from './pages/GuiaLlenado';
@@ -9,7 +9,13 @@ import PDFPreview from './pages/PDFPreview';
 import Contacto from './pages/Contacto';
 import Academia from './pages/Academia';
 
-// --- 2. PANTALLA TEMPORAL PARA LO QUE FALTA (Academia, Brote, Ajustes) ---
+// --- 2. IMPORTACIÓN DE PANTALLAS DE USUARIO ---
+import Login from './pages/Login';
+import Registro from './pages/Registro';
+import Perfil from './pages/Perfil';
+import Historial from './pages/Historial';
+
+// --- 3. PANTALLA TEMPORAL (Solo para lo que falta: Brote y Ajustes) ---
 const EnConstruccion = ({ nombre }) => {
   const navigate = useNavigate();
   return (
@@ -38,23 +44,27 @@ function App() {
         <Route path="/guia-llenado" element={<GuiaLlenado />} />
         <Route path="/formulario" element={<Formulario />} />
         <Route path="/pdf-preview" element={<PDFPreview />} />
-        <Route path="/academia" element={<Academia />} />
-        
-        {/* PANTALLA DE CONTACTO CONECTADA */}
         <Route path="/contacto" element={<Contacto />} />
 
         {/* =========================================
-            RUTAS DEL MENÚ INFERIOR (PENDIENTES)
+            ACADEMIA
+           ========================================= */}
+        <Route path="/academia" element={<Academia />} />
+        {/* Aquí irán las rutas de CursoDetalle y Leccion cuando las creemos */}
+
+        {/* =========================================
+            USUARIO Y CUENTA
+           ========================================= */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/historial" element={<Historial />} />
+
+        {/* =========================================
+            RUTAS PENDIENTES
            ========================================= */}
         <Route path="/brote" element={<EnConstruccion nombre="Brote (Mascota)" />} />
         <Route path="/ajustes" element={<EnConstruccion nombre="Ajustes" />} />
-        
-        {/* =========================================
-            RUTAS DE USUARIO (PENDIENTES)
-           ========================================= */}
-        <Route path="/login" element={<EnConstruccion nombre="Inicio de Sesión" />} />
-        <Route path="/registro" element={<EnConstruccion nombre="Registro de Cuenta" />} />
-        <Route path="/perfil" element={<EnConstruccion nombre="Mi Perfil" />} />
 
         {/* Ruta de error 404 */}
         <Route path="*" element={<EnConstruccion nombre="Página no encontrada" />} />

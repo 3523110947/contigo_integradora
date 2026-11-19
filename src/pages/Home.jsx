@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import HomeButton from '../components/HomeButton';
 
 export default function Home() {
   const navigate = useNavigate();
+  const [usuario, setUsuario] = useState(null);
+
+  // Revisamos si hay sesión iniciada
+  useEffect(() => {
+    const sesion = JSON.parse(localStorage.getItem('usuarioContigo'));
+    if (sesion) {
+      setUsuario(sesion.usuario || sesion);
+    }
+  }, []);
 
   return (
     <div className="app-wrapper">
-      {/* El Aura Morada de fondo */}
       <div className="aura-bg">
         <div className="blob blob-1"></div>
         <div className="blob blob-2"></div>
@@ -19,8 +28,25 @@ export default function Home() {
             <img src="/logo.png" alt="Contigo" className="app-icon" />
             <span className="logo-text">Contigo</span>
           </div>
-          <button className="btn-settings" onClick={() => navigate('/ajustes')}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width: '24px'}}><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          
+          {/* BOTÓN DINÁMICO: Si hay usuario, va al perfil. Si no, al login. */}
+          <button 
+            className="btn-settings" 
+            onClick={() => navigate(usuario ? '/perfil' : '/login')}
+            title={usuario ? "Ir a mi perfil" : "Iniciar sesión"}
+          >
+            {usuario ? (
+              // Mostramos la inicial del nombre si está logueado
+              <span style={{ fontWeight: '900', color: 'var(--brand-main)', fontSize: '1.1rem' }}>
+                {usuario.nombre ? usuario.nombre.charAt(0).toUpperCase() : 'U'}
+              </span>
+            ) : (
+              // Mostramos el icono de engranaje (o el que quieras para ingresar)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width: '24px'}}>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            )}
           </button>
         </header>
 
